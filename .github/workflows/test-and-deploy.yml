@@ -20,7 +20,7 @@ jobs:
           --health-retries=3
           -e MYSQL_DATABASE=todo
           -e MYSQL_ROOT_PASSWORD=secret
-          -e MYSQL_USER=root
+          -e MYSQL_USER=default
           -e MYSQL_PASSWORD=secret
           --entrypoint sh mysql:8
           -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
@@ -34,10 +34,6 @@ jobs:
         with:
           php-version: '8.0'
           extensions: gd, mysqli, pdo_mysql
-
-      - name: Copy env file
-        run: cp ./deployment/env/.env.example ./.env
-        working-directory: ./
 
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
@@ -63,7 +59,7 @@ jobs:
         run: php artisan cache:clear
         working-directory: ./
 
-      - name: Run Tests
+      - name: Run Unit Tests
         run: vendor/bin/phpunit --coverage-html tests/Report
         working-directory: ./
 
