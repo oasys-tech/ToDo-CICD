@@ -6,31 +6,7 @@ on:
       - '**'
 
 jobs:
-  php-sast:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.0'
-          extensions: gd, mysqli, pdo_mysql
-
-      - name: Install Composer Dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist
-        working-directory: ./
-
-      - name: Check with PHPStan
-        run: vendor/bin/phpstan analyse --error-format=github --configuration=phpstan.neon
-        working-directory: ./
-
-      - name: Check with psalm
-        run: vendor/bin/psalm --output-format=github
-        working-directory: ./
-
-  unit-test:
+  test:
     runs-on: ubuntu-latest
 
     services:
@@ -65,6 +41,14 @@ jobs:
 
       - name: Install Composer Dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
+        working-directory: ./
+
+      - name: Check with PHPStan
+        run: vendor/bin/phpstan analyse --error-format=github --configuration=phpstan.neon
+        working-directory: ./
+
+      - name: Check with psalm
+        run: vendor/bin/psalm --output-format=github
         working-directory: ./
 
       - name: Generate app key
