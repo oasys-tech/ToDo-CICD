@@ -40,26 +40,32 @@ jobs:
         working-directory: ./
 
       - name: Check with PHPStan
+        if: always()
         run: vendor/bin/phpstan analyse --error-format=github --configuration=phpstan.neon
         working-directory: ./
 
       - name: Check with psalm
+        if: always()
         run: vendor/bin/psalm --output-format=github
         working-directory: ./
 
       - name: Generate app key
+        if: always()
         run: php artisan key:generate
         working-directory: ./
 
       - name: Copy env.testing file
+        if: always()
         run: cp ./.env ./.env.testing
         working-directory: ./
 
       - name: Clear Application Cache
+        if: always()
         run: php artisan cache:clear
         working-directory: ./
 
       - name: Run Unit Tests
+        if: always()
         run: vendor/bin/phpunit --coverage-html tests/Report
         working-directory: ./
 
