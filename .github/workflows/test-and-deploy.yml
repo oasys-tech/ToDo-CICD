@@ -1,0 +1,92 @@
+name: CI/CD with MySQL
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  php-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: gd, mysqli, pdo_mysql
+
+      - name: Install Composer Dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist
+        working-directory: ./
+
+      - name: Check with PHPStan
+        run: vendor/bin/phpstan analyse --error-format=github --configuration=phpstan.neon
+        working-directory: ./
+
+      - name: Check with psalm
+        run: vendor/bin/psalm --output-format=github
+        working-directory: ./
+
+  unit-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        ports:
+          - "3306:3306"
+        options: --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+          -e MYSQL_DATABASE=todo
+          -e MYSQL_ROOT_PASSWORD=secret
+          -e MYSQL_USER=root
+          -e MYSQL_PASSWORD=secret
+          --entrypoint sh mysql:8
+          -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: gd, mysqli, pdo_mysql
+
+      - name: Copy env file
+        run: cp ./deployment/env/.env.example ./.env
+        working-directory: ./
+
+      - name: Install Composer Dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist
+        working-directory: ./
+
+      - name: Generate app key
+        run: php artisan key:generate
+        working-directory: ./
+
+      - name: Copy env.testing file
+        run: cp ./.env ./.env.testing
+        working-directory: ./
+
+      - name: Clear Application Cache
+        run: php artisan cache:clear
+        working-directory: ./
+
+      - name: Run Tests
+        run: vendor/bin/phpunit --coverage-html tests/Report
+        working-directory: ./
+
+      - name: Upload Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: ./tests/Report/*
+          retention-days: 7
