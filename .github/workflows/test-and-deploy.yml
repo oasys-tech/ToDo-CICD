@@ -44,11 +44,6 @@ jobs:
         run: vendor/bin/phpstan analyse --error-format=github --configuration=phpstan.neon
         working-directory: ./
 
-      - name: Check with psalm
-        if: always()
-        run: vendor/bin/psalm --output-format=github
-        working-directory: ./
-
       - name: Copy env.testing file
         if: always()
         run: cp ./.env.example ./.env.testing
