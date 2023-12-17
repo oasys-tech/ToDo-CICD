@@ -12,10 +12,9 @@ class ToDoController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function index()
+    public function index(): \Illuminate\Database\Eloquent\Collection
     {
         // ToDoを取得する
         $toDos = ToDo::with('toDoDetails')->get();
@@ -25,22 +24,10 @@ class ToDoController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  StoreRequest  $request
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): void
     {
         // 新規のToDoモデルを作成する
         $toDo = new ToDo();
@@ -49,8 +36,8 @@ class ToDoController extends Controller
         $toDo->title = $request->get('title');
 
         // 空のToDoDetailを作成する
-        $toDoDetail = new ToDoDetail();
-        $toDoDetail->name = null;
+        $toDoDetail                 = new ToDoDetail();
+        $toDoDetail->name           = null;
         $toDoDetail->completed_flag = false;
 
         // DBにデータを登録する
@@ -61,35 +48,13 @@ class ToDoController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdateRequest  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-    public function update(UpdateRequest $request, $id)
+    public function update(UpdateRequest $request, $id): void
     {
         // IDに紐づくToDoモデルを取得する
         $toDo = ToDo::find($id);
@@ -105,9 +70,9 @@ class ToDoController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-    public function destroy($id)
+    public function destroy($id): void
     {
         // IDに紐づくToDoモデルを取得する
         $toDo = ToDo::find($id);

@@ -5,7 +5,7 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^8.0",
         "doctrine/dbal": "^3.3",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
@@ -20,9 +20,8 @@
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
-        "phpstan/phpstan": "^1.10",
-        "phpunit/phpunit": "^9.3.3",
-        "vimeo/psalm": "^5.16"
+        "nunomaduro/larastan": "^1.0",
+        "phpunit/phpunit": "^9.3.3"
     },
     "autoload": {
         "psr-4": {

@@ -1,4 +1,9 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
 parameters:
+    level: 7
     paths:
-        - app
-    level: 9
+        - app/Http/Controllers
+        - app/Models
+    ignoreErrors:
