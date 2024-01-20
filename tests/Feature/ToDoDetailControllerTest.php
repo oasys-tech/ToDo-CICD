@@ -21,6 +21,8 @@ class ToDoDetailControllerTest extends TestCase
         // アサーション
         $response->assertStatus(200);
         $this->assertDatabaseCount(ToDoDetail::class, 1);
+        $toDoDetail = ToDoDetail::first();
+        $this->assertEquals($toDo->id, $toDoDetail->to_do_id);
     }
 
     public function test_ToDoDetail更新()
@@ -41,6 +43,7 @@ class ToDoDetailControllerTest extends TestCase
         // アサーション
         $response->assertStatus(200);
         $after = ToDoDetail::find($before->id);
+        $this->assertEquals($toDo->id, $after->to_do_id);
         $this->assertEquals('updated', $after->name);
         $this->assertTrue($after->completed_flag);
     }
