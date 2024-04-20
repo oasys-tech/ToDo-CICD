@@ -1,0 +1,19 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www
+file_exists_behavior: OVERWRITE
+
+hooks:
+  ApplicationStop:
+    - location: deployment/scripts/application_stop.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: deployment/scripts/after_install.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: deployment/scripts/application_start.sh
+      runas: root
