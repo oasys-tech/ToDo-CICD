@@ -111,7 +111,7 @@
               retention-days: 7
    ```
 
-# CodeDeployの設定
+# CodeDeployをセットアップする
 1. EC2にCodeDeployAgentをインストールする
 2. CodeDeployをセットアップする
    1. サービスロールを作成する
