@@ -116,6 +116,7 @@
 2. CodeDeployをセットアップする
    1. サービスロールを作成する
    2. アプリケーションとデプロイグループを作成する
+   3. リビジョン保管用のS3を作成する
 3. appspec.yamlを作成する
    1. ApplicationStopのライフサイクルフックでWebサーバを終了する  
       `deployment/scripts/application_stop.sh`  
