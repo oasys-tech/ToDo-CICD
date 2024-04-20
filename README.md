@@ -80,7 +80,7 @@
             working-directory: ./
    ``` 
    
-3. 静的解析を実行する
+5. 静的解析を実行する
    ```yaml
    jobs:
       steps:
@@ -89,7 +89,7 @@
           run: vendor/bin/phpstan analyse --error-format=github --configuration=phpstan.neon
           working-directory: ./
    ```
-4. 単体テストを実行する
+6. 単体テストを実行する
    ```yaml
    jobs:
       steps:
@@ -98,7 +98,7 @@
             run: vendor/bin/phpunit --coverage-html tests/Report
             working-directory: ./
    ```
-5. カバレッジレポートをアップロードする
+7. カバレッジレポートをアップロードする
    ```yaml
    jobs:
       steps:
@@ -110,3 +110,52 @@
               path: ./tests/Report/*
               retention-days: 7
    ```
+
+# CodeDeployの設定
+1. EC2にCodeDeployAgentをインストールする
+2. CodeDeployをセットアップする
+   1. サービスロールを作成する
+   2. アプリケーションとデプロイグループを作成する
+3. appspec.yamlを作成する
+   1. ApplicationStopのライフサイクルフックでWebサーバを終了する  
+      `deployment/scripts/application_stop.sh`  
+      ```shell
+      if [[ -n $(pgrep httpd) ]]; then
+        systemctl stop httpd
+      fi
+      ```
+   2. AfterInstallのライフサイクルフックでアプリケーションをセットアップする  
+      `deployment/scripts/after_install.sh`  
+      ※実際のコードでは問題の解析のためにdeployment/deploy.logに実行結果をログ出力している
+      1. デプロイしたリソースの権限を変更する
+      ```shell
+      semanage fcontext -a -t httpd_sys_rw_content_t /var/www/storage
+      semanage fcontext -a -t httpd_sys_rw_content_t /var/www/bootstrap/cache
+      chown apache:apache -R /var/www/
+      ```
+      2. バックエンドのセットアップとDBをマイグレートする
+      ```shell
+      cd /var/www
+      composer install
+      sudo -u apache php artisan migrate --force
+      ```
+      3. バックエンドのキャッシュを削除する
+      ```shell
+      sudo -u apache php /var/www/artisan cache:clear
+      sudo -u apache php /var/www/artisan view:clear
+      sudo -u apache php /var/www/artisan config:cache
+      sudo -u apache php /var/www/artisan optimize
+      sudo -u apache php /var/www/artisan route:cache
+      ```
+      4. フロントエンドのセットアップする
+      ```shell
+      sudo -u apache npm install
+      set +e
+      sudo -u apache npm run production
+      set -e
+      ```
+   3. ApplicationStartのライフサイクルフックでWebサーバを開始する
+      `deployment/scripts/application_start.sh`
+      ```shell
+      systemctl start httpd
+      ```
