@@ -160,3 +160,6 @@
       ```shell
       systemctl start httpd
       ```
+   4. appspec.yamlを作成する  
+      `appspec.yaml`  
+      CodeDeployのライフサイクルフックに作成したシェルを割り当てる
