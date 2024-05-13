@@ -163,3 +163,46 @@
    4. appspec.yamlを作成する  
       `appspec.yaml`  
       CodeDeployのライフサイクルフックに作成したシェルを割り当てる
+   
+## CDワークフローを作成する
+1. デプロイ用ユーザを作成する
+2. デプロイ用ユーザのアクセスキー/シークレットをGitHubに登録する
+3. github/workflows/test-and-deploy.ymlに新規ステップを作成する
+   ```yaml
+    deploy:
+      needs: test
+      runs-on: ubuntu-latest
+      if: (github.ref == 'refs/heads/main') && (github.event_name == 'push')
+   ```
+   
+4. デプロイソースのzipを作成する
+   ```yaml
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Delete storage
+        run: rm -rf ./src/storage
+
+      - name: Zipping code
+        run: zip -r todo_${{ github.run_id }}.zip .
+   ```
+5. デプロイソースをS3にアップロードする
+   ```yaml
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Upload source to S3
+        run: aws s3 cp zeder_${{ github.run_id }}.zip s3://todo-revision-bucket --quiet
+   ```
+6. デプロイを開始する
+   ```yaml
+      - name: Registration app to CodeDeploy
+        run: aws deploy register-application-revision --application-name todo --s3-location bucket=todo-revision-bucket,bundleType="zip",key=todo_${{ github.run_id }}.zip
+
+      - name: Deploy app to EC2
+        run: aws deploy create-deployment --application-name todo --deployment-group-name todoDeployGroup --file-exists-behavior "OVERWRITE" --s3-location bucket=todo-revision-bucket,bundleType="zip",key=todo_${{ github.run_id }}.zip
+   ```
