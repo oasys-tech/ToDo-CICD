@@ -191,12 +191,12 @@
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET }}
           aws-region: ap-northeast-1
 
       - name: Upload source to S3
-        run: aws s3 cp zeder_${{ github.run_id }}.zip s3://todo-revision-bucket --quiet
+        run: aws s3 cp todo_${{ github.run_id }}.zip s3://todo-revision-bucket --quiet
    ```
 6. デプロイを開始する
    ```yaml
