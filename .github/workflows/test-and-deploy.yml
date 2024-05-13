@@ -74,7 +74,7 @@ jobs:
           aws-region: ap-northeast-1
 
       - name: Upload source to S3
-        run: aws s3 cp zeder_${{ github.run_id }}.zip s3://todo-revision-bucket --quiet
+        run: aws s3 cp todo_${{ github.run_id }}.zip s3://todo-revision-bucket --quiet
 
       - name: Registration app to CodeDeploy
         run: aws deploy register-application-revision --application-name todo --s3-location bucket=todo-revision-bucket,bundleType="zip",key=todo_${{ github.run_id }}.zip

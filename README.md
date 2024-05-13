@@ -164,7 +164,7 @@
       `appspec.yaml`  
       CodeDeployのライフサイクルフックに作成したシェルを割り当てる
    
-## CDワークフローを作成する
+# CDワークフローを作成する
 1. デプロイ用ユーザを作成する
 2. デプロイ用ユーザのアクセスキー/シークレットをGitHubに登録する
 3. github/workflows/test-and-deploy.ymlに新規ステップを作成する
