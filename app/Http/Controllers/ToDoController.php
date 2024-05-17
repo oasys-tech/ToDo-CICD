@@ -61,6 +61,7 @@ class ToDoController extends Controller
 
         // タイトルをToDoモデルに設定する
         $toDo->title = $request->get('title');
+        $toDo->color = $request->get('color');
 
         // ToDoデータベースを更新する
         $toDo->save();
