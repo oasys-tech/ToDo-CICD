@@ -14,7 +14,8 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'nullable|string'
+            'title' => 'nullable|string',
+            'color' => 'nullable|string'
         ];
     }
 }
