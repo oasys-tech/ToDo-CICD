@@ -3,7 +3,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ColorLendsIcon from "@mui/icons-material/ColorLensSharp";
 import SpeedDial from '@mui/material/SpeedDial';
-import {Card, CardActions, CardContent, CardHeader, IconButton, SpeedDialAction, TextField,} from "@mui/material";
+import {Card, CardActions, CardContent, CardHeader, IconButton, InputBase, SpeedDialAction,} from "@mui/material";
 import List from "@mui/material/List";
 import React, {useState} from "react";
 import {useDeleteToDoMutateTask, useUpdateToDoMutateTask,} from "../hooks/ToDo";
@@ -70,6 +70,16 @@ function ToDo(props) {
     return (
         <Card>
             <CardHeader
+                avatar={
+                    <InputBase
+                        sx={{ml: 1, flex: 1}}
+                        placeholder="タイトル"
+                        inputProps={{'aria-label': 'タイトル', style: {fontSize: 20, fontWeight: "bold", paddingLeft: 10, color: "#FFF"}}}
+                        fullWidth
+                        defaultValue={props.toDo.title}
+                        onChange={eventUpdateTodo}
+                    />
+                }
                 action={
                     <SpeedDial
                         ariaLabel="Change color"
@@ -102,16 +112,6 @@ function ToDo(props) {
                     </SpeedDial>
                 }
                 style={{backgroundColor: color}}
-            />
-            <TextField
-                variant="standard"
-                margin="dense"
-                defaultValue={props.toDo.title}
-                fullWidth
-                inputProps={{
-                    style: {fontSize: 20, fontWeight: "bold", paddingLeft: 10},
-                }}
-                onChange={eventUpdateTodo}
             />
             <CardContent sx={{p: 0}}>
                 <List>
